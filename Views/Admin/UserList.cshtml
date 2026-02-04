@@ -1,0 +1,23 @@
+﻿@model IEnumerable<UserDto>
+
+<h2>User List</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Email</th>
+            
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+               
+                <td>@user.Role</td>
+            </tr>
+        }
+    </tbody>
+</table>

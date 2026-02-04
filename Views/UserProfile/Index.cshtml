@@ -1,0 +1,103 @@
+﻿<button class="btn btn-primary mb-3" onclick="openCreate()">
+    Add user
+</button>
+<!-- UserLIST -->
+<div id="Listcontainer"></div>
+
+@* @model IEnumerable<UserProfile>
+
+@{
+    ViewData["Title"] = "User Profiles";
+}
+
+<h2>User Profiles</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+            </tr>
+        }
+    </tbody>
+</table> *@
+<!-- CREATE MODAL -->
+<div class="modal fade" id="CreateNodeModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Creat UserList </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="CreateNodeBody"></div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+             function loadlist() {
+            $.ajax({
+            url:'/UserProfile/UserProfileList',
+                type: 'GET',
+                success: function (html) {
+                    $('#Listcontainer').html(html);
+                },
+                error: function () {
+                    alert('Error loading table');
+                }
+            });
+        }
+             $(document).ready(function () {
+
+                 loadlist();
+        });
+    </script>
+    <!--Add-->
+    <script>
+
+        // Open Create Modal
+        function openCreate() {
+            $.get('/UserProfile/Create', function (data) {
+                $("#CreateNodeBody").html(data);
+                $("#CreateNodeModal").modal('show');
+            });
+        }
+              // Submit Create Form via AJAX
+        $(document).on("submit", "#Createform", function (e) {
+            e.preventDefault();   //call before the submission
+
+            $.post('/UserProfile/Create', $(this).serialize(), function (res) {
+                if (res.success) {
+                    $("#CreateNodeModal").modal('hide');
+                     loadlist();// reloads the table
+                } else {
+                    // re-render form with validation errors
+                    $("#CreateNodeBody").html(res);
+                }
+            });
+        });
+    </script>
+    <!--for delete-->
+    <script>
+        // Delete UserProfile
+        function deleteUserProfile(id) {
+            if (confirm("Are you sure you want to delete this user profile?")) {
+                $.post('/UserProfile/Delete', { id: id }, function (res) {
+                    if (res.success) {
+                        loadlist(); // reloads the table
+                    } else {
+                        alert('Error deleting user profile.');
+                    }
+                });
+            }
+            }
+    </script>
+}
