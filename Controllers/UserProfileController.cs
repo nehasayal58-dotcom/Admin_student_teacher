@@ -16,22 +16,7 @@ namespace Admin_Student_Teacher.Controllers
             {
                 _repo = repo;
             }
-
-            //public IActionResult Create()
-            //{
-            //    return View();
-            //}
-
-            //[HttpPost]
-            //public IActionResult Create(UserProfile model)
-            //{
-            //    model.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            //    _repo.Create(model);
-            //    return RedirectToAction("Index");
-            //}
-
-        public IActionResult Index()
+       public IActionResult Index()
         {
             //var profiles = _repo.GetAll();
             return View();

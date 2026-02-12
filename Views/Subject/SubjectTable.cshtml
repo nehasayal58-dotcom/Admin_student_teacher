@@ -1,0 +1,39 @@
+﻿@model List<Admin_Student_Teacher.Models.Subjects>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@item.SubjectName</td>
+                <td>
+                    <button class="btn btn-warning btn-sm"
+                            onclick="openEditSubject(@item.Id)">
+                        Edit
+                    </button>
+
+                    @if(!item.IsAssigned)
+                    {
+                        <button class="btn btn-danger btn-sm"
+                                onclick="deleteSubject(@item.Id)">
+                            Delete
+                        </button>
+
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Assigned</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,6 +33,8 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IUserProfileRepository _userProfileRepo;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly ITeacherSubjectRepository _teacherSubjectRepository;
 
         private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
@@ -39,7 +42,7 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, RoleManager<IdentityRole> roleManager, IUserProfileRepository userProfileRepo)
+            IEmailSender emailSender, RoleManager<IdentityRole> roleManager, IUserProfileRepository userProfileRepo,ISubjectRepository subjectRepository, ITeacherSubjectRepository teacherSubjectRepository)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -50,6 +53,8 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
            
             _roleManager = roleManager;
             _userProfileRepo = userProfileRepo;
+            _subjectRepository = subjectRepository;
+            _teacherSubjectRepository = teacherSubjectRepository;
         }
 
         /// <summary>
@@ -113,6 +118,10 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
             [Required]
             public string Role { get; set; }
+            //only for teacher
+            public int? SubjectId { get; set; }
+            //for dropdown
+            public List<SelectListItem> Subjects { get; set; } = new();
         }
 
 
@@ -120,6 +129,16 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //  ADD THIS for subject
+            Input = new InputModel
+            {
+                Subjects = _subjectRepository.GetUnassignedSubjects()
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.Id.ToString(),
+                        Text = s.SubjectName
+                    }).ToList()
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -140,6 +159,8 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    //  AUTO EMAIL CONFIRM
+                    await _userManager.ConfirmEmailAsync(user,await _userManager.GenerateEmailConfirmationTokenAsync(user));
                     _logger.LogInformation("User created a new account with password.");
                     // Create role if it doesn't exist
                     if (!await _roleManager.RoleExistsAsync(Input.Role))
@@ -157,6 +178,15 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
                         LastName = Input.LastName
                     };
                     _userProfileRepo.Create(profile);
+                    //  ADD THIS BLOCK HERE for drop down
+                    if (Input.Role == "Teacher" && Input.SubjectId.HasValue)
+                    {
+                        _teacherSubjectRepository.Assign(new TeacherSubject
+                        {
+                            TeacherId = user.Id,
+                            SubjectId = Input.SubjectId.Value
+                        });
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -170,15 +200,20 @@ namespace Admin_Student_Teacher.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    //}
+                    //else
+                    //{
+                    //    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //    return LocalRedirect(returnUrl);
+                    //}
+                    return new JsonResult(new
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                        success = true,
+                        redirectUrl = Url.Action("UserList", "Adminn")
+                    });
                 }
                 foreach (var error in result.Errors)
                 {

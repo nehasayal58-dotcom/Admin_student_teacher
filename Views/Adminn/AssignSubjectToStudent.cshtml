@@ -1,0 +1,23 @@
+﻿@model StudentSubjectAssignVM
+
+<h2>Assign Subject to Student</h2>
+
+<form asp-action="AssignSubjectToStudent" method="post">
+    <input type="hidden" asp-for="StudentId" />
+
+    <div class="mb-3">
+        <label>Student</label>
+        <input class="form-control" value="@ViewBag.StudentName" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label>Subject</label>
+        <select asp-for="SubjectId"
+                asp-items="ViewBag.Subjects"
+                class="form-control">
+            <option value="">-- Select Subject --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Assign</button>
+</form>

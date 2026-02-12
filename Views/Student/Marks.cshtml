@@ -1,0 +1,23 @@
+﻿
+<div id="Listcontainer"></div>
+@section Scripts {
+
+    <script>
+             function loadlist() {
+            $.ajax({
+            url:'/Student/Index',
+                type: 'GET',
+                success: function (html) {
+                    $('#Listcontainer').html(html);
+                },
+                error: function () {
+                    alert('Error loading table');
+                }
+            });
+        }
+             $(document).ready(function () {
+
+                 loadlist();
+        });
+    </script>
+}

@@ -1,0 +1,178 @@
+﻿@{
+    Layout = null;
+}
+
+@model List<Admin_Student_Teacher.Models.AdminUserVM>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Filtered Users Report</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+
+        .page {
+            position: relative;
+        }
+
+        .left-bar {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 10px;
+            height: 100%;
+            background-color: #C9A227;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .school-info h3 {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .school-info p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+
+        .meta {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .gold-line {
+            height: 2px;
+            background-color: #C9A227;
+            margin: 20px 0;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 20px;
+            margin: 25px 0;
+        }
+
+        .section-title {
+            background-color: #C9A227;
+            color: #fff;
+            padding: 8px 10px;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #F2F2F2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="left-bar"></div>
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="school-info">
+                <img src="@Url.Content("~/images/School.png")" height="120" alt="School logo" />
+                <h3>NECHO SANSKRITI SENIOR SECONDARY SCHOOL</h3>
+                <p>Plot No. D-258, Phase 8-A, Industrial Area</p>
+                <p>S.A.S Nagar (Mohali), Punjab - 140308</p>
+                <p>+91-7717474088 | info@nechonetworks.com</p>
+            </div>
+
+            <div class="meta">
+                <p><b>Date:</b> @DateTime.Now.ToString("dd-MM-yyyy")</p>
+                <p><b>Academic Year:</b> 2025–26</p>
+            </div>
+        </div>
+
+        <div class="gold-line"></div>
+
+        <div class="title">
+            FILTERED USERS REPORT
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="section-title">SUMMARY</div>
+        <table>
+            <tr>
+                <td>Total Records</td>
+                <td>@Model.Count()</td>
+            </tr>
+        </table>
+
+        <!-- USERS TABLE -->
+        <div class="section-title">USERS INFORMATION</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Roll No</th>
+                    <th>Subjects</th>
+                    <th>Percentage</th>
+                    <th>Subject Count</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.Email</td>
+                        <td>@u.FirstName @u.LastName</td>
+                        <td>@u.Role</td>
+
+                        <!-- Roll No (Only Student) -->
+                        <td>
+                            @(u.Role == "Student" ? u.RollNo : "-")
+                        </td>
+
+                        <!-- Subjects (Only Teacher) -->
+                        <td>
+                            @(u.Role == "Teacher" ? u.Subjects : "-")
+                        </td>
+
+                        <!-- Percentage (Only Student) -->
+                        <td>
+                            @(u.Role == "Student"
+                                                    ? (u.Percentage?.ToString("0.00") ?? "N/A")
+                                                    : "-")
+                        </td>
+
+                        <!-- Subject Count (Only Student) -->
+                        <td>
+                            @(u.Role == "Student" ? u.SubjectCount?.ToString() : "-")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>

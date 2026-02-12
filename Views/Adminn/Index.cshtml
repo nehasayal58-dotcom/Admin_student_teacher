@@ -1,5 +1,28 @@
-﻿@model IEnumerable<AdminUserVM>
-
+﻿@* @model IEnumerable<AdminUserVM>
+ *@
+@model PagedResult<AdminUserVM>
+@* <a asp-action="SendPdf"
+   asp-route-id="@user.Id"
+   class="btn btn-primary">
+    Send PDF
+</a> *@
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <strong>Total Records :</strong> @Model.TotalItems 
+        
+    </div>
+    <div>
+        Show
+        <select id="pageSize" class="form-select d-inline-block" style="width:100px;">
+            <option value="3" selected="@(Model.PageSize == 3)">3</option>
+            <option value="5" selected="@(Model.PageSize == 5)">5</option>
+            <option value="10" selected="@(Model.PageSize == 10)">10</option>
+            <option value="20" selected="@(Model.PageSize == 20)">20</option>
+        </select>
+        entries
+    </div>
+   
+</div>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -8,18 +31,32 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Role</th>
+            <th>Roll No</th>
+            <th>Assigned subject</th>
+            <th>Subjects</th>
+            <th>Percentage</th>
             <th>Actions</th>
             @* <th>Assign Role</th> *@
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (var user in Model.Items)
         {
             <tr>
                 <td>@user.Email</td>
                 <td>@(user.FirstName ?? "—")</td>
                 <td>@(user.LastName ?? "—")</td>
                 <td>@(user.Role ?? "None")</td>
+               
+                <td>@if(user.Role=="Student")
+                    {
+                        @(user.RollNo)
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
                 @*  <td>
                     <form asp-action="AssignRole" method="post" class="d-flex gap-2">
                         <input type="hidden" name="userId" value="@user.UserId" />
@@ -35,19 +72,134 @@
                         </button>
                     </form>
                 </td> *@
+
+                <!-- Assigned Subject column -->
                 <td>
+                    @if (user.Role == "Teacher")
+                    {
+                        @(string.IsNullOrEmpty(user.Subjects) ? "Not Assigned" : user.Subjects)
+                    }
+                    else
+                    {
+                        <span>—</span>
+                    }
+                </td>
+                @* <td>
                     <button class="btn btn-danger btn-sm"
                             onclick="deleteUser('@user.UserId')">
                         Delete
                     </button>
+                </td> *@
+                <td>
+                    @(user.Role == "Student" ? user.SubjectCount : "-")
+                </td>
+
+
+
+
+               <!--showing total percentage -->
+                <td>
+                    @(user.Role == "Student"
+                                    ? (user.Percentage != null ? user.Percentage + "%" : "N/A")
+                                    : "-")
+                </td>
+                <!-- Actions -->
+                <td class="d-flex gap-2">
+
+                    @if (user.Role == "Admin")
+                    {
+                        <span class="badge bg-success">cannot edit</span>
+                       
+                    }
+                    else
+                    {
+                        <button class="btn btn-warning btn-sm" onclick="openEditUser('@user.UserId')">Edit</button>
+
+                    }
+
+                    @if (user.Role == "Teacher")
+                    {
+                        @* <a asp-action="AssignSubject"
+                           asp-route-teacherId="@user.UserId"
+                           class="btn btn-sm btn-primary">
+                            Assign Subject
+                        </a> *@
+                        <button class="btn btn-sm btn-primary"
+                                onclick="openAssignSubject('@user.UserId')">
+                            Assign Subject
+                        </button>
+                    }
+                    @if (user.Role == "Admin")
+                    {
+                       @*  <button class="btn btn-danger btn-sm"
+                        onclick="deleteUser('@user.UserId')" disabled>
+                            Delete
+                        </button> *@
+                        <span class="badge bg-success">Can not Delete</span>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger btn-sm"
+                                onclick="deleteUser('@user.UserId')" >
+                            Delete
+                        </button>
+                    }
+                    @if (user.Role == "Student")
+                    {
+                        <button class="btn btn-sm btn-info"
+                                onclick="showMarks('@user.UserId')">
+                            View Marks
+                        </button>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+<div class="text-center mb-2">
+    Showing @((Model.CurrentPage - 1) * Model.PageSize + 1)
+    to @(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalItems))
+    of @Model.TotalItems entries
+</div>
+<nav>
+    <ul class="pagination justify-content-center">
 
+        @if (Model.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@Url.Action("Index", "Adminn",
+                                      new { page = Model.CurrentPage - 1, pageSize = Model.PageSize, searchText = Model.SearchText })">
+                Previous
+            </a>
+        </li>
+                }
 
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", "Adminn",
+                                      new { page = i, pageSize = Model.PageSize, searchText = Model.SearchText })">
+                @i
+            </a>
+        </li>
+                }
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@Url.Action("Index", "Adminn",
+                                      new { page = Model.CurrentPage + 1, pageSize = Model.PageSize, searchText = Model.SearchText })">
+                Next
+            </a>
+        </li>
+                }
+
+    </ul>
+</nav>
 
 
 

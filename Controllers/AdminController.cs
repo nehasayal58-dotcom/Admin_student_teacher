@@ -1,12 +1,14 @@
 ﻿using Admin_Student_Teacher.Data.Repositories;
+using Admin_Student_Teacher.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
 namespace Admin_Student_Teacher.Controllers
 {
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly IUserRepository _repo;

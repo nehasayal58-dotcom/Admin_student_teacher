@@ -62,8 +62,29 @@
 
                 <span asp-validation-for="Input.Role" class="text-danger"></span>
             </div>
+            <!--for dropdown list -->
+          @*   <div class="mb-3" id="subjectDiv" style="display:none;">
+                <label class="fw-bold">Assign Subject</label>
 
+                <select asp-for="SubjectId"
+                        asp-items="Model.Subjects"
+                        class="form-select">
+                    <option value="">-- Select Subject --</option>
+                </select>
 
+                <span asp-validation-for="SubjectId" class="text-danger"></span>
+            </div> *@
+            <div class="mb-3" id="subjectDiv" style="display:none;">
+                <label class="fw-bold">Assign Subject</label>
+
+                <select asp-for="Input.SubjectId"
+                        asp-items="Model.Input.Subjects"
+                        class="form-select">
+                    <option value="">-- Select Subject --</option>
+                </select>
+
+                <span asp-validation-for="Input.SubjectId" class="text-danger"></span>
+            </div>
 
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
@@ -102,4 +123,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleSubject() {
+            const role = document.querySelector('input[name="Input.Role"]:checked');
+            document.getElementById("subjectDiv").style.display =
+                role && role.value === "Teacher" ? "block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", toggleSubject);
+
+        document.querySelectorAll('input[name="Input.Role"]').forEach(radio => {
+            radio.addEventListener('change', toggleSubject);
+        });
+    </script>
 }

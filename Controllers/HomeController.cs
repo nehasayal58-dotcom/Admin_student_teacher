@@ -1,9 +1,11 @@
 using Admin_Student_Teacher.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Admin_Student_Teacher.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

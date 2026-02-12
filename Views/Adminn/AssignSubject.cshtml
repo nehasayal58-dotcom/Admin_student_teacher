@@ -1,0 +1,46 @@
+﻿
+
+
+@* <form asp-action="AssignSubject" method="post" id="Assigned subject">
+    <input type="hidden" name="TeacherId" value="@ViewBag.TeacherId" />
+
+    <label>Subject</label>
+    <select name="SubjectId" class="form-control">
+        @foreach (var subject in ViewBag.Subjects)
+        {
+            <option value="@subject.Id">@subject.SubjectName</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-success mt-2">
+        Assign
+    </button>
+</form> *@
+@model TeacherSubject
+
+<form id="assignSubjectForm">
+    <input type="hidden" name="TeacherId" value="@ViewBag.TeacherId" />
+
+    <div class="mb-3">
+        <label class="form-label">Select Subject</label>
+        <select name="SubjectId" class="form-select" required>
+            <option value="">-- Select Subject --</option>
+            @foreach (var subject in ViewBag.Subjects)
+            {
+                <option value="@subject.Id">@subject.SubjectName</option>
+            }
+        </select>
+     @*    <select name="SubjectId" class="form-select">
+            <option value="">-- No Subject (Unassign) --</option>
+
+            @foreach (var subject in ViewBag.Subjects)
+            {
+                <option value="@subject.Id">@subject.SubjectName</option>
+            }
+        </select> *@
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Assign
+    </button>
+</form>

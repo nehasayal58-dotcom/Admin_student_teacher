@@ -1,0 +1,39 @@
+﻿<h3>My Students</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Marks</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Email</td>
+                <td>@s.FirstName @s.LastName</td>
+                <td>@(s.RollNo ?? "-")</td>
+                <td>
+                    @s.Marks
+                </td>
+                <td>
+                   @*  <a asp-controller="Teacher"
+                       asp-action="AssignMarks"
+                       asp-route-studentId="@s.StudentId"
+                       class="btn btn-sm btn-primary">
+                        Assign Marks
+                    </a> *@
+                      <button class="btn btn-sm btn-primary"
+                            onclick="openAssignSubject('@s.StudentId')">
+                        Assign Marks
+                    </button>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,36 @@
+﻿
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            @*    <th>First Name</th>
+            <th>Last Name</th> *@
+            <th>Full Name</th>
+            @*   <th>Role</th> *@
+            <th>Assigned Subject</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.Email</td>
+                @* <td>@t.FirstName</td>
+                <td>@t.LastName</td> *@
+                <td>@t.FirstName @t.LastName</td>
+                @*     <td>@t.Role</td> *@
+                <td>@t.SubjectName</td> <!-- Map to actual subject name if needed -->
+                <td>
+                    @* <a href="@Url.Action("Edit", "Adminn", new { id = t.UserId })">Edit</a> | *@
+                    <button class="btn btn-warning btn-sm" onclick="openEditUser('@t.UserId')">Edit</button>
+                    @* <a href="@Url.Action("Delete", "Adminn", new { id = t.UserId })">Delete</a> *@
+                    <button class="btn btn-danger btn-sm"
+                            onclick="deleteUser('@t.UserId')">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

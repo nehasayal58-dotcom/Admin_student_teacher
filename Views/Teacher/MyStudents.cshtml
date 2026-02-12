@@ -1,0 +1,79 @@
+﻿<div id="Listcontainer"></div>
+<div class="modal fade" id="assignMarksModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="assignMarksModalBody">
+                <!-- Partial view loads here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--assigned teacher subject-->
+@section Scripts {
+
+    <script>
+             function loadlist() {
+            $.ajax({
+            url:'/Teacher/Index',
+                type: 'GET',
+                success: function (html) {
+                    $('#Listcontainer').html(html);
+                },
+                error: function () {
+                    alert('Error loading table');
+                }
+            });
+        }
+             $(document).ready(function () {
+
+                 loadlist();
+        });
+    </script>
+<!--for Assign marks to student-->
+
+<script>
+        function openAssignSubject(studentId) {
+                    $.get('/Teacher/AssignMarks', { studentId: studentId }, function (html) {
+                $('#assignMarksModalBody').html(html);
+                $('#assignMarksModal').modal('show');
+        });
+    }
+
+        $(document).on('submit', '#AssingMarks', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '/Teacher/AssignMarks',   // POST action
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (res) {
+                if (res.success) {
+                    alert(res.message);
+                        $('#assignMarksModal').modal('hide');
+                    loadlist();
+                } else {
+                    // validation error (same teacher/subject or subject assigned)
+                    alert(res.message);
+                       $('#assignMarksModal').modal('hide');
+                    loadlist();
+                }
+            },
+            error: function () {
+                alert('Something went wrong. Please try again.');
+            }
+        });
+    });
+</script>
+}
+
+
+
+

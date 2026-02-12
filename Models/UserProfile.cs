@@ -9,5 +9,7 @@
         public string FirstName { get; set; } = string.Empty;
 
         public string LastName { get; set; } = string.Empty;
+        public  int ? RollNo { get; set; }
+
     }
 }

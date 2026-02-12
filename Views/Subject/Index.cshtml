@@ -1,0 +1,167 @@
+﻿<h2>Subject</h2>
+
+@if(User.IsInRole("Admin"))
+{
+    <button class="btn btn-success mb-3" onclick="openCreateSubject()">
+        Add New subject
+    </button>
+}
+<!--partial view-->
+<div id="ListContainer">
+
+</div>
+<!--create modal-->
+<div class="modal fade" id="createSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="createSubjectBody">
+                <!-- Create partial will load here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--for edit-->
+<div class="modal fade" id="EditSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="EditSubjectBody">
+                <!-- Create partial will load here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function loadSubjectList() {
+            $.ajax({
+                url: '/Subject/SubjectTable',
+                type: 'GET',
+                success: function (data) {
+                    $('#ListContainer').html(data);
+                },
+                error: function () {
+                    alert('Error loading subject list.');
+                }
+            });
+        }
+        $(document).ready(function () {
+            loadSubjectList();
+        });
+    </script>
+   <!--Add Subject-->
+@*        <script>
+                function openCreateSubject() {
+                $.get('/Subject/Create', function (data) {
+                        $("#createSubjectBody").html(data);
+                        $("#createSubjectModal").modal('show');
+                });
+            }
+            // Submit Create Form via AJAX
+        $(document).on("submit", "#SubjectCreateForm", function (e) {
+            e.preventDefault();   //call before the submission
+
+            $.post('/Subject/Create', $(this).serialize(), function (res) {
+                if (res.success) {
+                    $("#createSubjectModal").modal('hide');
+                     loadSubjectList();// reloads the table
+                } else {
+                    // re-render form with validation errors
+                    $("#createSubjectBody").html(res);
+                }
+            });
+        });
+    </script> *@
+    <!--for delete-->
+    <script>
+        // Delete
+        function deleteSubject(id) {
+            if (confirm("Are you sure you want to delete this user profile?")) {
+                $.post('/Subject/Delete', { id: id }, function (res) {
+                    if (res.success) {
+                        loadSubjectList(); // reloads the table
+                    } else {
+                        alert('Error deleting subject');
+                    }
+                });
+            }
+            }
+    </script>
+    <script>
+        // Edit Subject
+        function openEditSubject(id) {
+            $.get('/Subject/Edit', { id: id }, function (data) {
+                $("#EditSubjectBody").html(data);
+                $("#EditSubjectModal").modal('show');
+            });
+        }
+        // Submit Edit Form via AJAX
+        $(document).on("submit", "#SubjectEditForm", function (e) {
+            e.preventDefault();   //call before the submission
+            $.post('/Subject/Edit', $(this).serialize(), function (res) {
+                if (res.success) {
+                    $("#EditSubjectModal").modal('hide');
+                    loadSubjectList();// reloads the table
+                } else {
+                    // re-render form with validation errors
+                    $("#EditSubjectBody").html(res);
+                }
+            });
+        });
+    </script>
+    <!--for add subject-->
+    <script>
+                  function openCreateSubject() {
+                $.get('/Subject/Create', function (data) {
+                        $("#createSubjectBody").html(data);
+                        $("#createSubjectModal").modal('show');
+                });
+            
+        }
+
+        $(document).on('submit', '#SubjectCreateForm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/Subject/Create',   // POST action
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        $('#createSubjectModal').modal('hide');
+                        loadSubjectList();
+                    } else {
+                        // validation error (subject is already assigned )
+                        alert(res.message);
+                       $('#createSubjectModal').modal('hide');
+                        loadSubjectList();
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+}

@@ -1,0 +1,28 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            @* <th>First Name</th>
+            <th>Last Name</th> *@
+            @* <th>Role</th> *@
+            <th>FullName</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Email</td>
+@*                 <td>@s.FirstName</td>
+                <td>@s.LastName</td> *@
+                <td>@s.FirstName @s.LastName</td>
+               @*  <td>@s.Role</td> *@
+                <td>
+                    <a href="@Url.Action("EditStudent", "Adminn", new { id = s.UserId })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Adminn", new { id = s.UserId })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

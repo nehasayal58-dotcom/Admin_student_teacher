@@ -1,0 +1,19 @@
+﻿
+@model IEnumerable<StudentMarksVM>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.SubjectName</td>
+                <td>@m.Marks</td>
+            </tr>
+        }
+    </tbody>
+</table>

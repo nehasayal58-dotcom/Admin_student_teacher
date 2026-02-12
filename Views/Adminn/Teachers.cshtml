@@ -1,0 +1,75 @@
+﻿
+
+<!--For Edit-->
+<div class="modal fade" id="EditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="EditModalBody">
+                <!-- Partial view loads here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="Listcontainer"></div>
+@section Scripts{
+
+   <!--To Load teacherTable-->
+    <script>
+             function loadlist() {
+            $.ajax({
+            url:'/Adminn/TeacherList',
+                type: 'GET',
+                success: function (html) {
+                    $('#Listcontainer').html(html);
+                },
+                error: function () {
+                    alert('Error loading table');
+                }
+            });
+        }
+             $(document).ready(function () {
+
+                 loadlist();
+        });
+    </script>
+
+    <!--Edit-->
+    <script>
+
+             function openEditUser(userId) {
+            $.get('/Adminn/Edit', { id: userId }, function (data) {
+                $('#EditModalBody').html(data);
+                $('#EditModal').modal('show');
+            });
+        }
+        $(document).on('submit', '#editUserForm', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Adminn/Edit',   // POST action
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        $('#EditModal').modal('hide');
+                        loadlist();
+                    } else {
+                        // validation error
+                        alert(res.message);
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+
+    </script>
+}

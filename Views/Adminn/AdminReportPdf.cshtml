@@ -1,0 +1,342 @@
+﻿@{
+    Layout = null;
+}
+
+
+
+@model AdminFullReportVM
+@* <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Report</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-size: 14px;
+        }
+
+        .summary-box {
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container my-4">
+
+        <!-- HEADER -->
+        <div class="text-center bg-primary text-white p-4 rounded">
+            <h3>@Model.SchoolName</h3>
+            <div>@Model.Address</div>
+            <div>@Model.Contact</div>
+        </div>
+
+        <h5 class="text-center mt-3 fw-bold">
+            School Management System – Admin Report
+        </h5>
+
+        <div class="d-flex justify-content-between mt-2">
+            <span>Date: @DateTime.Now.ToString("dd-MM-yyyy")</span>
+            <span>Academic Year: 2025–26</span>
+        </div>
+
+        <hr />
+
+        <!-- SUMMARY -->
+        <h5 class="text-primary fw-bold">Summary</h5>
+        <div class="row g-3">
+            <div class="col summary-box">Teachers<br><b>@Model.TotalTeachers</b></div>
+            <div class="col summary-box">Students<br><b>@Model.TotalStudents</b></div>
+            <div class="col summary-box">Subjects<br><b>@Model.TotalSubjects</b></div>
+            <div class="col summary-box">Users<br><b>@Model.TotalUsers</b></div>
+        </div>
+
+        <!-- TEACHERS -->
+        <h5 class="text-primary mt-4">Teachers</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.Teachers)
+                {
+                    <tr>
+                        <td>@t.Name</td>
+                        <td>@t.Email</td>
+                        <td>@t.Subject</td>
+                        <td>@t.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- STUDENTS -->
+        <h5 class="text-primary mt-4">Students</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Total Subjects</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.Students)
+                {
+                    <tr>
+                        <td>@s.RollNo</td>
+                        <td>@s.Name</td>
+                        <td>@s.Email</td>
+                        <td>@s.TotalSubjects</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- USERS -->
+        <h5 class="text-primary mt-4">All Users</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Users)
+                {
+                    <tr>
+                        <td>@u.Name</td>
+                        <td>@u.Email</td>
+                        <td>@u.Role</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html> *@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>School Management Report</title>
+
+    <style>
+                body {
+                        font-family: Arial, Helvetica, sans-serif;
+                        margin: 40px;
+                        color: #333;
+
+        }
+
+                 .page {
+                        position: relative;
+
+        }
+
+
+        /* Left vertical gold bar */
+                 .left-bar {
+                        position: absolute;
+                        left: -30px;
+                        top: 0;
+                        width: 10px;
+                        height: 100%;
+                        background-color: #C9A227;
+
+        }
+
+                 .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+
+        }
+
+                 .school-info h3 {
+                        margin: 5px 0;
+                        font-size: 16px;
+
+        }
+
+                 .school-info p {
+                        margin: 2px 0;
+                        font-size: 12px;
+
+        }
+
+                 .meta {
+                        text-align: right;
+                        font-size: 12px;
+
+        }
+
+                 .gold-line {
+                        height: 2px;
+                        background-color: #C9A227;
+                        margin: 20px 0;
+
+        }
+
+                 .title {
+                        text-align: center;
+                        font-size: 20px;
+                        margin: 25px 0;
+
+        }
+
+                 .section-title {
+                        background-color: #C9A227;
+                        color: #fff;
+                        padding: 8px 10px;
+                        font-size: 14px;
+                        margin-top: 30px;
+
+        }
+
+                table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        font-size: 13px;
+
+        }
+
+                th, td {
+                        border: 1px solid #ccc;
+                        padding: 8px;
+                        text-align: left;
+
+        }
+
+                th {
+                        background-color: #F2F2F2;
+
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="left-bar"></div>
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="school-info">
+              @*   <img src="@($"{Context.Request.Scheme}://{Context.Request.Host}/images/school-logo.png.jpg")"
+                                          height="300" /> *@
+                <img src=" @Url.Content("~/images/School.png")" height="300" alt="School logo" />
+                <h3>NECHO SANSKRITI SENIOR SECONDARY SCHOOL</h3>
+                <p>Plot No. D-258, Phase 8-A, Industrial Area, Sector 75</p>
+                <p>Sohana, S.A.S Nagar (Mohali), Punjab - 140308</p>
+                <p>+91-7717474088 | info@nechonetworks.com</p>
+            </div>
+
+            <div class="meta">
+                <p><b>Date:</b>@DateTime.Now.ToString("dd-MM-yyyy")</p>
+               @*  <p><b>Report Ref:</b> </p> *@
+                <p><b>Academic Year:</b>2025–26</p>
+            </div>
+        </div>
+
+        <div class="gold-line"></div>
+
+        <div class="title">
+            School Management System Report
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="section-title">SUMMARY</div>
+        <table>
+            <tr><td>Total Teachers</td><td>@Model.TotalTeachers</td></tr>
+            <tr><td>Total Students</td><td>@Model.TotalStudents</td></tr>
+            <tr><td>Total Subjects</td><td>@Model.TotalSubjects</td></tr>
+            <tr><td>Total Users</td><td>@Model.TotalUsers</td></tr>
+        </table>
+
+       
+
+
+
+        <!-- TEACHERS -->
+        <div class="section-title">TEACHERS INFORMATION</div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>Status</th>
+            </tr>
+            @foreach (var t in Model.Teachers)
+            {
+                <tr>
+                    <td>@t.Name</td>
+                    <td>@t.Email</td>
+                    <td>@t.Subject</td>
+                    <td>@t.Status</td>
+                </tr>
+            }
+        </table>
+
+        <!-- STUDENTS -->
+        <div class="section-title">STUDENTS INFORMATION</div>
+        <table>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Email</th>
+
+                <th>Total Subjects</th>
+            </tr>
+            @foreach (var s in Model.Students)
+            {
+                <tr>
+                    <td>@s.RollNo</td>
+                    <td>@s.Name</td>
+                    <td>@s.Email</td>
+
+                    <td>@s.TotalSubjects</td>
+
+                </tr>
+            }
+        </table>
+
+        <!-- USERS -->
+
+        <div class="section-title">ALL USERS</div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+            @foreach (var u in Model.Users)
+            {
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Email</td>
+                    <td>@u.Role</td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>
+</html>

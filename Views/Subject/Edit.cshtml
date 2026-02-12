@@ -1,0 +1,22 @@
+﻿@model Admin_Student_Teacher.Models.Subjects
+
+
+<form asp-action="Edit" method="post" id="SubjectEditForm">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label>Subject Name</label>
+        <input asp-for="SubjectName" class="form-control" required />
+        <span asp-validation-for="SubjectName" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

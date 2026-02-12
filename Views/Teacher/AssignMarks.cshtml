@@ -1,0 +1,36 @@
+﻿@model AssignMarksVM
+
+@* <h3>Assign Marks</h3> *@
+
+<p><strong>Student:</strong> @Model.StudentName</p>
+
+
+<form asp-action="AssignMarks" method="post"  id="AssingMarks">
+    <input type="hidden" asp-for="StudentId" />
+    <input type="hidden" asp-for="SubjectId" />
+    
+
+    @* <div class="mb-3">
+        <label>Subject</label>
+        <select asp-for="SubjectId" class="form-control" required>
+            <option value="">-- Select Subject --</option>
+            @foreach (var s in Model.Subjects)
+            {
+                <option value="@s.Id">@s.SubjectName</option>
+            }
+        </select>
+    </div *@
+
+    <div class="mb-3">
+        <label>Marks</label>
+        <input asp-for="Marks" class="form-control" type="number" min="0" max="100" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Save Marks
+    </button>
+
+   @*  <a asp-action="MyStudents" class="btn btn-secondary">
+        Back
+    </a> *@
+</form>

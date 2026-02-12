@@ -1,0 +1,85 @@
+﻿@model AdminUserVM
+
+<form id="editUserForm">
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="form-group">
+        <label>Email</label>
+        <input asp-for="Email" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>First Name</label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Last Name</label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Role</label>
+        <select asp-for="Role" class="form-control">
+            <option>Admin</option>
+            <option>Teacher</option>
+            <option>Student</option>
+        </select>
+    </div>
+ 
+        @if (Model.Role == "Teacher")
+{
+    <div class="form-group">
+        <label>Subject</label>
+
+        <select asp-for="SubjectId" class="form-control">
+            <option value="">-- no subject --</option>
+
+            @foreach (var s in ViewBag.Subjects)
+            {
+                <option value="@s.Id">
+                    @s.SubjectName
+                </option>
+            }
+        </select>
+    </div>
+}
+
+        @if (Model.Role == "Student")
+        {
+        <div class="form-group">
+            <label>Roll Number</label>
+            <input asp-for="RollNo" class="form-control" />
+        </div>
+        }
+
+
+
+        <br />
+    <button type="submit" class="btn btn-success">
+        Update
+    </button>
+</form>
+
+
+
+
+
+
+@*  @if(Model.Role=="Teacher")
+        {
+        <div class="form-group">
+            <label>Subject</label>
+            <select class="form-control" name="SubjectId">
+                <option value="">-- Select Subject --</option>
+
+                @foreach (var s in ViewBag.Subjects)
+                {
+                    <option value="@s.Id"
+                            selected="@(Model.SubjectId == s.Id)">
+                        @s.SubjectName
+                    </option>
+                }
+            </select>
+        </div>
+        } *@

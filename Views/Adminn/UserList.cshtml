@@ -1,9 +1,85 @@
 ﻿@* @model IEnumerable<AdminUserVM> *@
+    
 
 <h2>Manage Users</h2>
 <button class="btn btn-success" onclick="openRegisterModal()">
     + Add User
 </button>
+<a asp-action="DownloadAdminReport"
+   asp-controller="Adminn"
+   class="btn btn-danger">
+    Download PDF
+</a>
+<button class="btn btn-danger" onclick="downloadPdf()">Download Filtered PDF</button>
+<button type="button" class="btn btn-success" onclick="exportExcel()">
+    Export Excel
+</button>
+<button type="button" class="btn btn-info" onclick="exportCsv()">
+    Export CSV
+</button>
+<button class="btn btn-warning" onclick="downloadZip()">
+    Download Filtered ZIP
+</button>
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal">
+    Send PDF
+</button>
+<br/>
+<br />
+
+
+<div class="row mb-3 g-2">
+
+    <!-- 🔹 Name Search -->
+    <div class="col-md-3">
+        <input type="text" id="nameSearch"
+               class="form-control"
+               placeholder="Search by Name..."
+               value="@Model.NameSearch" />
+    </div>
+
+    <!-- 🔹 Email Search -->
+    <div class="col-md-3">
+        <input type="text" id="emailSearch"
+               class="form-control"
+               placeholder="Search by Email..."
+               value="@Model.EmailSearch" />
+    </div>
+
+    <!-- 🔹 Role Filter -->
+    <div class="col-md-2">
+        <select id="roleFilter"
+                asp-items="Model.Roles"
+                class="form-control">
+            <option value="">-- All Roles --</option>
+        </select>
+    </div>
+
+    <!-- 🔹 Subject Filter -->
+    <div class="col-md-2">
+        <select id="subjectFilter"
+                asp-items="Model.Subjects"
+                class="form-control">
+            <option value="">-- All Subjects --</option>
+        </select>
+    </div>
+
+    <!-- 🔹 Search Button -->
+    <div class="col-md-1">
+        <button id="btnSearch" class="btn btn-primary w-100">
+            Search
+        </button>
+    </div>
+
+    <!-- 🔹 Reset Button -->
+    <div class="col-md-1">
+        <button type="button" id="btnReset" class="btn btn-secondary w-100">
+            Reset
+        </button>
+    </div>
+
+</div>
+
+<br />
 <br />
 <div class="modal fade" id="registerModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -21,46 +97,110 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="assignSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="assignSubjectModalBody">
+                <!-- Partial view loads here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--For Edit-->
+<div class="modal fade" id="EditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="EditModalBody">
+                <!-- Partial view loads here -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--To show details for student-->
+<div class="modal fade" id="marksModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Student Marks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="marksModalBody">
+              
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--pdf for email-->
+<div class="modal fade" id="emailModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Send PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="email" id="toEmail"
+                       class="form-control"
+                       placeholder="Enter Email" />
+
+                <input type="hidden" id="nameSearch" value="@Model.NameSearch" />
+                <input type="hidden" id="emailSearch" value="@Model.EmailSearch" />
+                <input type="hidden" id="roleId" value="@Model.RoleId" />
+                <input type="hidden" id="subjectId" value="@Model.SubjectId" />
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-success"
+                        onclick="sendPdf()">
+                    Send
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="messageBox"></div>
 <!-- UserLIST -->
 <div id="Listcontainer"></div>
+
+
+
+
+
+
 @section Scripts{
     <script>
-             function loadlist() {
-            $.ajax({
-            url:'/Adminn/Index',
-                type: 'GET',
-                success: function (html) {
-                    $('#Listcontainer').html(html);
-                },
-                error: function () {
-                    alert('Error loading table');
-                }
-            });
-        }
-             $(document).ready(function () {
-
-                 loadlist();
-        });
+        $('#pageSize').val('@Model.PageSize');
     </script>
-    <!--for delete-->
-   @*  <script>
-        function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                $.ajax({
-                    url:'/Adminn/Delete',
-                    type: 'POST',
-                    data: { userId: userId },
-                    success: function () {
-                        alert('User deleted successfully');
-                        loadlist(); // Refresh the list after deletion
-                    },
-                    error: function () {
-                        alert('Error deleting user');
-                    }
-                });
-            }
-            }
-    </script> *@
+
+    <!--for delete -->
+
     <script>
         function deleteUser(userId) {
         if (!confirm("Are you sure you want to delete this user?")) return;
@@ -68,14 +208,14 @@
         $.post('/Adminn/Delete', { id: userId }, function (res) {
             if (res.success) {
                 alert(res.message);
-                   loadlist();
+                           loadList(currentPage);
             } else {
                 alert(res.message);
             }
         });
     }
     </script>
-    <!--To load partial view -->
+    <!--To load partial view for register -->
     <script>
         function openRegisterModal() {
             $.get('/Adminn/RegisterUser', function (data) {
@@ -84,5 +224,342 @@
             });
         }
     </script>
+ 
+    <script>
+        $(document).on('change', 'input[name="Role"]', function () {
+            if (this.value === "Teacher") {
+                $('#subjectDiv').show();
+            } else {
+                $('#subjectDiv').hide();
+            }
+        });
+    </script>
 
+<!--assigned teacher subject-->
+
+    <script>
+        function openAssignSubject(teacherId) {
+            $.get('/Adminn/AssignSubject', { teacherId: teacherId }, function (html) {
+                $('#assignSubjectModalBody').html(html);
+                $('#assignSubjectModal').modal('show');
+            });
+        }
+
+        $(document).on('submit', '#assignSubjectForm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/Adminn/AssignSubject',   // POST action
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        $('#assignSubjectModal').modal('hide');
+                        loadList(currentPage);
+                    } else {
+                        // validation error (same teacher/subject or subject assigned)
+                        alert(res.message);
+                       $('#assignSubjectModal').modal('hide');
+                        loadList(currentPage);
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+    </script>
+
+    <!--Edit-->
+    <script>
+
+             function openEditUser(userId) {
+            $.get('/Adminn/Edit', { id: userId }, function (data) {
+                $('#EditModalBody').html(data);
+                $('#EditModal').modal('show');
+            });
+        }
+        $(document).on('submit', '#editUserForm', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Adminn/Edit',   // POST action
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+                        $('#EditModal').modal('hide');
+                        loadList(currentPage);
+                    } else {
+                        // validation error
+                        alert(res.message);
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+
+    </script>
+
+    <!--to handle page -->
+    <script>
+        $(document).on('submit', '#registerForm', function (e) {
+            e.preventDefault(); // stop normal post
+
+            $.ajax({
+                url: $(this).attr('action'),           // => "/Identity/Account/Register"
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+
+                    //  HANDLE JSON RESPONSE
+                    if (res.success) {
+                        // close modal
+                        $('#registerModal').modal('hide');
+
+                        // redirect to Admin page
+                        window.location.href = res.redirectUrl;       //tells the browser to navigate to the URL returned by the server. i.e  adminn/UserList
+                         loadList(currentPage);
+                    } else {
+                        alert("Registration failed");
+                    }
+                },
+                error: function () {
+                    alert("Something went wrong");
+                }
+            });
+        });
+    </script>
+
+  
+<script>
+        function showMarks(studentId) {
+        $("#marksModalBody").load(
+            '/Adminn/StudentMarksPartial?studentId=' + studentId,
+            function () {
+                var modal = new bootstrap.Modal(document.getElementById('marksModal'));
+                modal.show();
+            }
+        );
+        }
+    </script>
+   <!--Updated ajaaax-->
+    <script>
+        var currentPage = 1;
+
+        // 🔹 Main Load Function
+        function loadList(page = 1) {
+
+            currentPage = page;  // save selected page number
+
+            $.get('/Adminn/Index', {
+                page: page,
+                pageSize: $('#pageSize').val(),
+                nameSearch: $('#nameSearch').val(),   // updated
+                emailSearch: $('#emailSearch').val(), // updated
+                roleId: $('#roleFilter').val(),
+                subjectId: $('#subjectFilter').val()
+            }, function (data) {
+                $('#Listcontainer').html(data);   // html returned from the partial view
+            });
+        }
+
+        $(document).ready(function () {
+
+            // 🔹 First Load
+            loadList();    // automatically loads page 1 when page opens
+
+            // ✅ Search Button Click
+            $('#btnSearch').click(function () {
+                loadList(1);   // Always start from page 1
+            });
+
+            // 📄 PageSize Change
+            $(document).on('change', '#pageSize', function () {
+                loadList(1);
+            });
+
+            // 📌 Pagination Click
+            $(document).on('click', '.pagination a', function (e) {
+                e.preventDefault();
+
+                var url = new URL($(this).attr('href'), window.location.origin);
+                var page = url.searchParams.get("page");
+
+                loadList(page);
+            });
+
+            // 🔄 Reset Button
+            $('#btnReset').click(function () {
+
+                // Clear textboxes
+                $('#nameSearch').val('');
+                $('#emailSearch').val('');
+
+                // Reset dropdowns
+                $('#roleFilter').val('');
+                $('#subjectFilter').val('');
+
+                // Reset page size to default
+                $('#pageSize').val(3);
+
+                // Reload first page
+                loadList(1);
+            });
+        });
+    </script>
+
+
+    <!--to download filterpdf-->
+    <script>
+        function downloadPdf() {
+
+            var nameSearch = $('#nameSearch').val();
+            var emailSearch = $('#emailSearch').val();
+            var roleId = $('#roleFilter').val();
+            var subjectId = $('#subjectFilter').val();
+
+            var url = '/Adminn/DownloadPdf?' +
+                'nameSearch=' + nameSearch +
+                '&emailSearch=' + emailSearch +
+                '&roleId=' + roleId +
+                '&subjectId=' + subjectId;
+
+            window.open(url, '_blank');
+        }
+    </script>
+    <!--Export excel-->
+    <script>
+        function exportExcel() {
+
+            var nameSearch = $('#nameSearch').val() || '';
+            var emailSearch = $('#emailSearch').val() || '';
+            var roleId = $('#roleFilter').val() || '';
+            var subjectId = $('#subjectFilter').val() || '';
+
+            var url = '/Adminn/ExportToExcel?' +
+                'nameSearch=' + encodeURIComponent(nameSearch) +
+                '&emailSearch=' + encodeURIComponent(emailSearch) +
+                '&roleId=' + roleId +
+                '&subjectId=' + subjectId;
+
+            window.location.href = url;
+        }
+    </script>
+    <!--Export csv-->
+    <script>
+        function exportCsv(){
+            var nameSearch= $('#nameSearch').val() || '';
+            var eamilSearch=$('#emailSearch').val() || '';
+            var roleId=$('#roleFilter').val() ||"";
+            var subjectId=$('#subjectFilter').val() ||"";
+
+            var url='/Adminn/ExportToCsv?'+
+                'nameSearch='+encodeURIComponent(nameSearch)+
+                '&emailSearch='+encodeURIComponent(eamilSearch)+
+                '&roleId='+roleId+
+                '&subjectId='+subjectId;
+                window.location.href=url;
+        }
+    </script>
+
+
+    <!--to send email-->
+    <script>
+        function sendPdf() {
+
+            $.ajax({
+                url: '/Adminn/SendPdfToEmail',
+                type: 'POST',
+                data: {
+                    toEmail: $('#toEmail').val(),
+                    nameSearch: $('#nameSearch').val(),
+                    emailSearch: $('#emailSearch').val(),
+                    roleId: $('#roleFilter').val(),
+                    subjectId: $('#subjectFilter').val()
+                },
+                success: function (response) {
+
+                    if (response.success) {
+
+                        $('#messageBox').html(
+                            '<div class="alert alert-success">'
+                            + response.message +
+                            '</div>'
+                        );
+
+                        $('#emailModal').modal('hide');
+                          setTimeout(function () {
+                          window.location.href = '/Adminn/UserList';
+                         }, 2000);
+
+                    } else {
+
+                        $('#messageBox').html(
+                            '<div class="alert alert-danger">'
+                            + response.message +
+                            '</div>'
+                        );
+                            setTimeout(function () {
+                          window.location.href = '/Adminn/UserList';
+                         }, 2000);
+                    }
+                },
+                error: function () {
+                    $('#messageBox').html(
+                        '<div class="alert alert-danger">Something went wrong!</div>'
+                    );
+                }
+            });
+        }
+    </script>
+    <!--for  downlod zip-->
+    <script>
+        // 🔹 Download Filtered ZIP via AJAX
+    function downloadZip() {
+        // Get filter values
+        var nameSearch = $('#nameSearch').val() || '';
+        var emailSearch = $('#emailSearch').val() || '';
+        var roleId = $('#roleFilter').val() || '';
+        var subjectId = $('#subjectFilter').val() || '';
+
+        $.ajax({
+            url: '/Adminn/DownloadZip',  // Your controller action
+            type: 'GET',                 // or POST if you prefer
+            data: {
+                nameSearch: nameSearch,
+                emailSearch: emailSearch,
+                roleId: roleId,
+                subjectId: subjectId
+            },
+            xhrFields: {
+                responseType: 'blob' // Important: binary data
+            },
+            success: function (data, status, xhr) {
+                // Optional: get filename from Content-Disposition header
+                var filename = "FilteredUsers.zip";
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('filename=') !== -1) {
+                    filename = disposition.split('filename=')[1].replace(/"/g, '');
+                }
+
+                // Create blob and trigger download
+                var blob = new Blob([data], { type: 'application/zip' });
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (err) {
+                alert('Error generating ZIP file.');
+                console.error(err);
+            }
+        });
+    }
+    </script>
 }

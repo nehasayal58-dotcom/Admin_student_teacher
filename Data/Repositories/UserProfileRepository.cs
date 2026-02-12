@@ -30,17 +30,6 @@ namespace Admin_Student_Teacher.Data.Repositories
             using var connection = _context.CreateConnection();
             return connection.QuerySingleOrDefault<UserProfile>(sql, new { UserId = userId });
         }
-
-        // CREATE
-        //publMicrosoft.Data.SqlClient.SqlException: 'Must declare the scalar variable "@UserId".'ic void Create(UserProfile profile)
-        //{
-        //    var sql = @"INSERT INTO UserProfiles (UserId, FirstName, LastName)
-        //            VALUES (@UserId, @FirstName, @LastName)";
-
-        //    using var connection = _context.CreateConnection();
-        //    connection.Execute(sql, profile);
-        //}
-
         public bool Create(UserProfile profile)
         {
             using var conn = _context.CreateConnection();

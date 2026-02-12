@@ -1,0 +1,17 @@
+﻿@model Admin_Student_Teacher.Models.Subjects
+<form asp-action="Create" method="post" id="SubjectCreateForm">
+    <div class="form-group">
+        <label>Subject Name</label>
+        <input asp-for="SubjectName" class="form-control" required />
+        <span asp-validation-for="SubjectName" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
